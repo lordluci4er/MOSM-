@@ -1,4 +1,16 @@
-node_modules
+# Dependencies
+node_modules/
+
+# Environment
 .env
-logs
+
+# Logs
+logs/
+*.log
+
+# Firebase Credentials
 src/shared/config/credentials/
+
+# OS Files
+.DS_Store
+Thumbs.db
