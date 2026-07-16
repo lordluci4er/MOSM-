@@ -9,6 +9,7 @@ exports.findAll = (
     {
         page = 1,
         limit = 50,
+        search = "",
         partyId = null,
         status = null,
     } = {}
@@ -28,11 +29,10 @@ exports.findAll = (
 
     return Order.find(query)
         .populate("medicineId", "name")
-        .populate("partyId", "name phoneNumber")
+        .populate("partyId", "name")
         .sort({ createdAt: -1 })
         .skip((page - 1) * limit)
-        .limit(limit)
-        .lean();
+        .limit(limit);
 };
 
 exports.count = (
@@ -65,8 +65,7 @@ exports.findById = (firebaseUid, id) => {
         isDeleted: false,
     })
         .populate("medicineId", "name")
-        .populate("partyId", "name phoneNumber")
-        .lean();
+        .populate("partyId", "name");
 };
 
 exports.findPendingByMedicine = (
@@ -95,8 +94,7 @@ exports.update = (firebaseUid, id, data) => {
         }
     )
         .populate("medicineId", "name")
-        .populate("partyId", "name phoneNumber")
-        .lean();
+        .populate("partyId", "name");
 };
 
 exports.softDelete = (firebaseUid, id) => {
@@ -112,8 +110,5 @@ exports.softDelete = (firebaseUid, id) => {
         {
             new: true,
         }
-    )
-        .populate("medicineId", "name")
-        .populate("partyId", "name phoneNumber")
-        .lean();
+    );
 };
