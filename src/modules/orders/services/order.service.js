@@ -9,6 +9,33 @@ const {
     MESSAGES,
 } = require("../../../shared");
 
+// Transform Order Response
+const mapOrder = (order) => {
+    if (!order) return null;
+
+    return {
+        _id: order._id,
+
+        medicine: order.medicineId,
+
+        party: order.partyId,
+
+        quantity: order.quantity,
+
+        status: order.status,
+
+        notes: order.notes,
+
+        receivedAt: order.receivedAt,
+
+        receivedBy: order.receivedBy,
+
+        createdAt: order.createdAt,
+
+        updatedAt: order.updatedAt,
+    };
+};
+
 exports.createOrder = async (firebaseUid, data) => {
     // Check Medicine
     const medicine = await medicineRepository.findById(
@@ -50,13 +77,21 @@ exports.createOrder = async (firebaseUid, data) => {
         );
     }
 
-    return orderRepository.create({
+    const order = await orderRepository.create({
         firebaseUid,
         medicineId: data.medicineId,
         partyId: data.partyId,
         quantity: data.quantity || 1,
         notes: data.notes || "",
     });
+
+    const populatedOrder =
+        await orderRepository.findById(
+            firebaseUid,
+            order._id
+        );
+
+    return mapOrder(populatedOrder);
 };
 
 exports.getOrders = async (
@@ -79,7 +114,8 @@ exports.getOrders = async (
     ]);
 
     return {
-        items,
+        items: items.map(mapOrder),
+
         pagination: {
             page,
             limit,
@@ -106,7 +142,7 @@ exports.getOrderById = async (
         );
     }
 
-    return order;
+    return mapOrder(order);
 };
 
 exports.receiveOrder = async (
@@ -118,15 +154,18 @@ exports.receiveOrder = async (
         id
     );
 
-    return orderRepository.update(
-        firebaseUid,
-        id,
-        {
-            status: "RECEIVED",
-            receivedAt: new Date(),
-            receivedBy: firebaseUid,
-        }
-    );
+    const order =
+        await orderRepository.update(
+            firebaseUid,
+            id,
+            {
+                status: "RECEIVED",
+                receivedAt: new Date(),
+                receivedBy: firebaseUid,
+            }
+        );
+
+    return mapOrder(order);
 };
 
 exports.returnOrder = async (
@@ -138,8 +177,11 @@ exports.returnOrder = async (
         id
     );
 
-    return orderRepository.softDelete(
-        firebaseUid,
-        id
-    );
+    const order =
+        await orderRepository.softDelete(
+            firebaseUid,
+            id
+        );
+
+    return mapOrder(order);
 };
