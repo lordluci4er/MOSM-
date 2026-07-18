@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { verifyGoogleToken } from "./auth.service";
+import { googleLoginService } from "./auth.service";
 
 export const googleLogin = async (req: Request, res: Response) => {
   try {
@@ -12,12 +12,12 @@ export const googleLogin = async (req: Request, res: Response) => {
       });
     }
 
-    const user = await verifyGoogleToken(idToken);
+    const result = await googleLoginService(idToken);
 
     return res.status(200).json({
       success: true,
-      message: "Google token verified successfully",
-      data: user,
+      message: "Login successful",
+      data: result,
     });
   } catch (error) {
     return res.status(401).json({
