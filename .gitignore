@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
 
+# Build
+dist/
+
 # Environment
 .env
 
@@ -8,9 +11,16 @@ node_modules/
 logs/
 *.log
 
-# Firebase Credentials
-src/shared/config/credentials/
+# IDE
+.vscode/
+.idea/
 
-# OS Files
+# OS
 .DS_Store
 Thumbs.db
+
+# Coverage
+coverage/
+
+# Temporary
+*.tmp
