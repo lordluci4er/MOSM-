@@ -1,29 +1,15 @@
-import dotenv from 'dotenv';
-import { cleanEnv, port, str } from 'envalid';
+import dotenv from "dotenv";
+import { z } from "zod";
 
 dotenv.config();
 
-export const env = cleanEnv(process.env, {
-  NODE_ENV: str({
-    choices: ['development', 'production', 'test'],
-    default: 'development',
-  }),
-
-  PORT: port({
-    default: 5000,
-  }),
-
-  MONGO_URI: str(),
-
-  JWT_ACCESS_SECRET: str(),
-  JWT_ACCESS_EXPIRES: str(),
-
-  JWT_REFRESH_SECRET: str(),
-  JWT_REFRESH_EXPIRES: str(),
-
-  FIREBASE_PROJECT_ID: str(),
-  FIREBASE_CLIENT_EMAIL: str(),
-  FIREBASE_PRIVATE_KEY: str(),
-
-  CORS_ORIGIN: str(),
+const envSchema = z.object({
+  PORT: z.string().default("5000"),
+  DATABASE_URL: z.string(),
+  JWT_SECRET: z.string(),
+  FIREBASE_PROJECT_ID: z.string().optional(),
 });
+
+const env = envSchema.parse(process.env);
+
+export default env;
